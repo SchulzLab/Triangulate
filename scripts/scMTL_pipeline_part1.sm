@@ -1,0 +1,17 @@
+datasets= "StemNet HSMM"
+imputation_status= "imputed notImputed"
+feature_type= "static epigenetic dynamic"
+
+rule all:
+  input:
+    expand('monocle_{dataset}_{impute}_TPM_converted.RData', dataset= datasets.split(' '), impute= imputation_status.split(' ')),
+    expand('monocle_{dataset}_{impute}_TPM_converted.pdf', dataset= datasets.split(' '), impute= imputation_status.split(' '))
+    
+rule first_monocle:
+  input:
+    "{datasets}_{imputation_status}_TPM_converted.csv"
+  output:
+    'monocle_{datasets}_{imputation_status}_TPM_converted.pdf',
+    'monocle_{datasets}_{imputation_status}_TPM_converted.RData'
+  shell:
+    "time /TL/opt/bin/Rscript run_monocle_tuorial.R {input} {output[0]} {output[1]}"

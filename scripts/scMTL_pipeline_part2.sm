@@ -1,0 +1,44 @@
+datasets= 'StemNet HSMM'
+imputation_status= 'imputed notImputed'
+feature_type= 'static epigenetic dynamic'
+
+rule all:
+  input:
+    expand('scMTL_{dataset}_{impute}_{feat}_feature.txt', dataset= datasets.split(' '), impute= imputation_status.split(' '), feat= feature_type.split(' ')),
+    expand('scMTL_{dataset}_{impute}_{feat}_response.txt', dataset= datasets.split(' '), impute= imputation_status.split(' '), feat= feature_type.split(' ')),
+    expand('scMTL_{dataset}_{impute}_{feat}_MST_adj.txt', dataset= datasets.split(' '), impute= imputation_status.split(' '), feat= feature_type.split(' ')),
+    expand('scMTL_{dataset}_{impute}_{feat}_feature_reduced.txt', dataset= datasets.split(' '), impute= imputation_status.split(' '), feat= feature_type.split(' ')),
+    expand('scMTL_{dataset}_{impute}_{feat}_response_reduced.txt', dataset= datasets.split(' '), impute= imputation_status.split(' '), feat= feature_type.split(' ')),
+    expand('scMTL_{dataset}_{impute}_{feat}_feature_doubleReduced.txt', dataset= datasets.split(' '), impute= imputation_status.split(' '), feat= feature_type.split(' ')),
+    expand('scMTL_{dataset}_{impute}_{feat}_response_doubleReduced.txt', dataset= datasets.split(' '), impute= imputation_status.split(' '), feat= feature_type.split(' ')),
+
+
+rule prepare_ML_input:
+  input:
+    'monocle_{datasets}_{imputation_status}_TPM_converted.RData'
+  output:
+    'scMTL_{datasets}_{imputation_status}_{feature_type}_feature.txt',
+    'scMTL_{datasets}_{imputation_status}_{feature_type}_response.txt',
+    'scMTL_{datasets}_{imputation_status}_{feature_type}_MST_adj.txt'
+  shell:
+    'time R3script prepare_features_hg38.R {input[0]} {output[0]} {output[1]} {output[2]}'
+
+rule filter1:
+  input:
+    'scMTL_{datasets}_{imputation_status}_{feature_type}_feature.txt',
+    'scMTL_{datasets}_{imputation_status}_{feature_type}_response.txt'
+  output:
+    'scMTL_{datasets}_{imputation_status}_{feature_type}_feature_reduced.txt',
+    'scMTL_{datasets}_{imputation_status}_{feature_type}_response_reduced.txt'
+  shell:
+    'time R3script removeRedundantGenes_varianceBased.R {input[0]} {input[1]} {output[0]} {output[1]}'
+
+rule filter2:
+  input:
+    'scMTL_{datasets}_{imputation_status}_{feature_type}_feature_reduced.txt',
+    'scMTL_{datasets}_{imputation_status}_{feature_type}_response_reduced.txt'
+  output:
+    'scMTL_{datasets}_{imputation_status}_{feature_type}_feature_doubleReduced.txt',
+    'scMTL_{datasets}_{imputation_status}_{feature_type}_response_doubleReduced.txt'
+  shell:
+    'time R3script removeZeroExprTFs.R {input[0]} {input[1]} {output[0]} {output[1]}'

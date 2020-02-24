@@ -1,0 +1,29 @@
+datasets= 'StemNet HSMM'
+imputation_status= "imputed notImputed"
+feature_type= "static epigenetic dynamic"
+model_type= "singleTask TGGLasso"
+rule all:
+  input:
+    expand('/MMCI/MS/ExpRegulation/work/data/singleCell/HepG2/G_MTL/monocle/scMTL_{dataset}_{impute}_{feat}_{model}.RData', dataset= datasets.split(' '), impute= imputation_status.split(' '), feat= feature_type.split(' '), model= model_type.split(' '))
+
+rule filter1:
+  input:
+    '/MMCI/MS/ExpRegulation/work/data/singleCell/HepG2/G_MTL/monocle/scMTL_{datasets}_{imputation_status}_{feature_type}_feature.txt',
+    '/MMCI/MS/ExpRegulation/work/data/singleCell/HepG2/G_MTL/monocle/scMTL_{datasets}_{imputation_status}_response.txt'
+  output:
+    '/MMCI/MS/ExpRegulation/work/data/singleCell/HepG2/G_MTL/monocle/scMTL_{datasets}_{imputation_status}_{feature_type}_feature_reduced.txt',
+    '/MMCI/MS/ExpRegulation/work/data/singleCell/HepG2/G_MTL/monocle/scMTL_{datasets}_{imputation_status}_{feature_type}_response_reduced.txt'
+  shell:
+    'time /TL/opt/bin/Rscript removeRedundantGenes_varianceBased.R {input[0]} {input[1]} {output[0]} {output[1]}'
+    
+    
+rule build_model:
+  input:
+    '/MMCI/MS/ExpRegulation/work/data/singleCell/HepG2/G_MTL/monocle/scMTL_{datasets}_{imputation_status}_{feature_type}_feature_doubleReduced.txt',
+    '/MMCI/MS/ExpRegulation/work/data/singleCell/HepG2/G_MTL/monocle/scMTL_{datasets}_{imputation_status}_{feature_type}_response_doubleReduced.txt'
+  params:
+    script='run_{model_type}.R'
+  output:
+    '/MMCI/MS/ExpRegulation/work/data/singleCell/HepG2/G_MTL/monocle/scMTL_{datasets}_{imputation_status}_{feature_type}_{model_type}.RData'
+  shell:
+    'time /TL/opt/bin/Rscript {params.script} {input[0]} {input[1]} {output[0]}'
