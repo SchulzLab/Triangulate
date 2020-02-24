@@ -35,7 +35,7 @@ As the first step, the user needs to clone the git repository onto their desired
 ```console
 git clone https://github.com/SchulzLab/Triangulate.git
 ```
-It is required to have the following R packages installed for the compilation of the following script:
+It is required to have the following R packages installed for the compilation of the snakemake file:
 * [LinearMTL](github.com/tohein/LinearMTL)
 * parallel
 * doParallel
