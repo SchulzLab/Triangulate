@@ -1,6 +1,6 @@
 # Triangulate
 TRee guIded estimAtioN of siNgle cell reGULATion
-%Tree-guided Inferring regulators from single cell RNA-seq data
+[//]: <> Tree-guided Inferring regulators from single cell RNA-seq data
 
 Triangulate provides a platform for linking regulatory elements to gene expression in single cells. Given a feature matrix consisting of estimated TF activities for each gene, and a response matrix consisting of gene expression measurements at single cells, Triangulate is able to infer the TF-to-cell activities through building a mult-task learning model. The figure below illustrates the input matrices for the multi-task learning framework. The estimated coefficients obtained from training the model on the TF data can be used to interpret the activity of each TF in individual cells.
 ![Triangulate](https://github.com/SchulzLab/Triangulate/blob/master/images/triangulate.pdf)
@@ -23,9 +23,9 @@ pred.train <- cbind(1, x.train) %\*% rbind(TGL.model$intercept, TGL.model$B)</br
 
 pred.test <- cbind(1, x.test) %\*% rbind(TGL.model$intercept, TGL.model$B)<br/>
 
-%## Choices of the tree
-%The tree structure used to group the cells (tasks) can be arbitrary, however we propose a simple and intuitive way for constructing this tree, _HC-tree_.
-%### _HC-tree_:
-%In this approach, we apply hierarchical clustering on the response matrix using the _BuildTreeHC_ function from the _LinearMTL_ package.
-%### _M-tree_
-%This approach is more laborious compared to _HC-tree_. We first ran _Monocle_ on the gene expression matrix to obtain the coordinates of the single cells in the reduced dimension space. Using the _BuildTreeHC_ function, as described in _HC-tree_, we generated the tree structure from the coordinates in the reduced dimension space.
+[//]: <> ## Choices of the tree
+[//]: <> The tree structure used to group the cells (tasks) can be arbitrary, however we propose a simple and intuitive way for constructing this tree, _HC-tree_.
+[//]: <> ### _HC-tree_:
+[//]: <> In this approach, we apply hierarchical clustering on the response matrix using the _BuildTreeHC_ function from the _LinearMTL_ package.
+[//]: <> ### _M-tree_
+[//]: <> This approach is more laborious compared to _HC-tree_. We first ran _Monocle_ on the gene expression matrix to obtain the coordinates of the single cells in the reduced dimension space. Using the _BuildTreeHC_ function, as described in _HC-tree_, we generated the tree structure from the coordinates in the reduced dimension space.
