@@ -41,7 +41,7 @@ It is required to have the following R packages installed for the compilation of
 * doParallel
 * monocle
 
-To build the Triangulate model for this case study, the following command should be used in bash:
+To build the Triangulate model for this case study, the following command should be used in bash. But before that make sure to decompress the scMTL\_StemNet\_notImputed\_static\_feature\_doubleReduced.zip file in the data directory.
 ```console
 snakemake -s scripts/scMTL_case_study.sm
 ```
