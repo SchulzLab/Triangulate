@@ -1,6 +1,6 @@
 # Table of contents
 1. [Triangulate](#Triangulate)
-2. [Case study](#Case study)
+2. [Case study](#case-study)
 # Triangulate
 TRee guIded estimAtioN of siNgle cell reGULATion
 
@@ -27,7 +27,7 @@ pred.test <- cbind(1, x.test) %\*% rbind(TGL.model$intercept, TGL.model$B)
 ```
 **scMTL\_pipeline\_part3.sm** contains the snakemake workflow for the part 3 of analysis.
 
-# Case study
+# Case study <a name="case-study"></a>
 To demonstrate a usage of Triangulate, we provided a snakemake file that given the processed and filtered feature and response matrices, it runs the tree-guided MTL model on the static features, for notImputed expression of the HLC/PHH cells (StemNet).
 As the first step, the user needs to clone the git repository onto their desired repository:
 ```console
