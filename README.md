@@ -47,9 +47,13 @@ rule build_model:
   shell:
     'time /TL/opt/bin/Rscript {params.script} {input[0]} {input[1]} {output[0]}'
 ```
-By loading the resulting file stored in **scMTL\_StemNet\_notImputed\_static_TGGLasso.RData**, one can generate the coefficient heatmap:
+By loading the resulting file stored in **scMTL\_StemNet\_notImputed\_static_TGGLasso.RData** into R, one can generate the coefficient heatmap. But since this matrix contains 683 many TFs, the illustration of all those TFs can result in an unappealing and cluttered plot. Therefore, we prefer to show only those TFs that happen to have higher coefficient values compared to others.
 ```{r}
 load("scMTL_StemNet_notImputed_static_TGGLasso.RData")
 library(pheatmap)
-pheatmap(TGL.model$B)
+pheatmap(TGL.model$B) ## unfavorable
+## Select the top TFs
+top_TFs <- which(rowSums(abs(TGL.model$B)) > .5)
+pheatmap(TGL.model$B[top_TFs, ])
 ```
+![top\_TF\_coefficients](https://github.com/SchulzLab/Triangulate/blob/master/images/topTFs_coef.png)
