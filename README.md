@@ -3,7 +3,7 @@ TRee guIded estimAtioN of siNgle cell reGULATion
 %Tree-guided Inferring regulators from single cell RNA-seq data
 
 Triangulate provides a platform for linking regulatory elements to gene expression in single cells. Given a feature matrix consisting of estimated TF activities for each gene, and a response matrix consisting of gene expression measurements at single cells, Triangulate is able to infer the TF-to-cell activities through building a mult-task learning model. The figure below illustrates the input matrices for the multi-task learning framework. The estimated coefficients obtained from training the model on the TF data can be used to interpret the activity of each TF in individual cells.
-![Triangulate](images/triangulate.pdf)
+![Triangulate](https://github.com/SchulzLab/Triangulate/blob/master/images/triangulate.pdf)
 
 We divided the procedure into three parts, which are implremented using the snakemake workflow.
 Throughout this workflow three wildcards are defined: *datasets*, *imputation\_status*, and *feature\_type*. The values that we used for *datasets* in our study are StemNet for the HLC/PHH cells and HSMM for the skeletal muscle myoblast cells.
