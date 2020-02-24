@@ -1,3 +1,6 @@
+# Table of contents
+1. [Triangulate](#Triangulate)
+2. [Case study](Case study)
 # Triangulate
 TRee guIded estimAtioN of siNgle cell reGULATion
 
@@ -25,27 +28,19 @@ pred.test <- cbind(1, x.test) %\*% rbind(TGL.model$intercept, TGL.model$B)
 **scMTL\_pipeline\_part3.sm** contains the snakemake workflow for the part 3 of analysis.
 
 # Case study
-To demonstrate a usage of Triangulate, we provided a snakemake file that given the processed and filtered feature and response matrices, it runs the tree-guided MTL model on the static features, for notImputed expression of the HLC/PHH cells (StemNet). Here is how the content of this snakemake file should look like:
+To demonstrate a usage of Triangulate, we provided a snakemake file that given the processed and filtered feature and response matrices, it runs the tree-guided MTL model on the static features, for notImputed expression of the HLC/PHH cells (StemNet).
+As the first step, the user needs to clone the git repository onto their desired repository:
 ```console
-datasets= 'StemNet'
-imputation_status= 'notImputed'
-feature_type= 'static'
-model_type= 'TGGLasso'
-
-rule all:
-  input:
-    expand('/MMCI/MS/ExpRegulation/work/data/singleCell/HepG2/G_MTL/monocle/scMTL_{dataset}_{impute}_{feat}_{model}.RData', dataset= datasets.split(' '), impute= imputation_status.split(' '), feat= feature_type.split(' '), model= model_type.split(' '))
-
-rule build_model:
-  input:
-    'scMTL_{datasets}_{imputation_status}_{feature_type}_feature_doubleReduced.txt',
-    'scMTL_{datasets}_{imputation_status}_{feature_type}_response_doubleReduced.txt'
-  params:
-    script='run_{model_type}.R'
-  output:
-    'scMTL_{datasets}_{imputation_status}_{feature_type}_{model_type}.RData'
-  shell:
-    'time /TL/opt/bin/Rscript {params.script} {input[0]} {input[1]} {output[0]}'
+git clone https://github.com/SchulzLab/Triangulate.git
+```
+It is required to have the following R packages installed for the compilation of the following script:
+* [LinearMTL](github.com/tohein/LinearMTL)
+* parallel
+* doParallel
+* monocle
+To build the Triangulate model for this case study, the following command should be used in bash:
+```console
+snakemake -s scripts/scMTL_case_study.sm
 ```
 By loading the resulting file stored in **scMTL\_StemNet\_notImputed\_static_TGGLasso.RData** into R, one can generate the coefficient heatmap. But since this matrix contains 683 many TFs, the illustration of all those TFs can result in an unappealing and cluttered plot. Therefore, we prefer to show only those TFs that happen to have higher coefficient values compared to others.
 ```{r}
