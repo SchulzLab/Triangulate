@@ -25,4 +25,31 @@ pred.test <- cbind(1, x.test) %\*% rbind(TGL.model$intercept, TGL.model$B)
 **scMTL\_pipeline\_part3.sm** contains the snakemake workflow for the part 3 of analysis.
 
 # Case study
-To demonstrate a usage of Triangulate, we provided a snakemake file that given the processed and filtered feature and response matricies, it runs the tree-guided MTL model on the static features, for notImputed expression of the HLC/PHH cells.
+To demonstrate a usage of Triangulate, we provided a snakemake file that given the processed and filtered feature and response matrices, it runs the tree-guided MTL model on the static features, for notImputed expression of the HLC/PHH cells (StemNet). Here is how the content of this snakemake file should look like:
+```console
+datasets= 'StemNet'
+imputation_status= 'notImputed'
+feature_type= 'static'
+model_type= 'TGGLasso'
+
+rule all:
+  input:
+    expand('/MMCI/MS/ExpRegulation/work/data/singleCell/HepG2/G_MTL/monocle/scMTL_{dataset}_{impute}_{feat}_{model}.RData', dataset= datasets.split(' '), impute= imputation_status.split(' '), feat= feature_type.split(' '), model= model_type.split(' '))
+
+rule build_model:
+  input:
+    'scMTL_{datasets}_{imputation_status}_{feature_type}_feature_doubleReduced.txt',
+    'scMTL_{datasets}_{imputation_status}_{feature_type}_response_doubleReduced.txt'
+  params:
+    script='run_{model_type}.R'
+  output:
+    'scMTL_{datasets}_{imputation_status}_{feature_type}_{model_type}.RData'
+  shell:
+    'time /TL/opt/bin/Rscript {params.script} {input[0]} {input[1]} {output[0]}'
+```
+By loading the resulting file stored in **scMTL\_StemNet\_notImputed\_static_TGGLasso.RData**, one can generate the coefficient heatmap:
+```{r}
+load("scMTL_StemNet_notImputed_static_TGGLasso.RData")
+library(pheatmap)
+pheatmap(TGL.model$B)
+```
