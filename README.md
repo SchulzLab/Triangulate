@@ -1,6 +1,6 @@
 # Table of contents
 1. [Triangulate](#Triangulate)
-2. [Case study](Case study)
+2. [Case study](#Case study)
 # Triangulate
 TRee guIded estimAtioN of siNgle cell reGULATion
 
@@ -38,11 +38,12 @@ It is required to have the following R packages installed for the compilation of
 * parallel
 * doParallel
 * monocle
+
 To build the Triangulate model for this case study, the following command should be used in bash:
 ```console
 snakemake -s scripts/scMTL_case_study.sm
 ```
-By loading the resulting file stored in **scMTL\_StemNet\_notImputed\_static_TGGLasso.RData** into R, one can generate the coefficient heatmap. But since this matrix contains 683 many TFs, the illustration of all those TFs can result in an unappealing and cluttered plot. Therefore, we prefer to show only those TFs that happen to have higher coefficient values compared to others.
+After a successful execution of the command above, there should exist an Rdata file named **scMTL\_StemNet\_notImputed\_static_TGGLasso.RData** in the directory the command was executed. By loading this file into R, one can generate the coefficient heatmap. But since this matrix contains 683 many TFs, the illustration of all those TFs can result in an unappealing and cluttered plot. Therefore, we prefer to show only those TFs that have higher coefficient values compared to others.
 ```{r}
 load("scMTL_StemNet_notImputed_static_TGGLasso.RData")
 library(pheatmap)
