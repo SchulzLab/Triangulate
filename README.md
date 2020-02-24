@@ -17,9 +17,12 @@ removeZeroExprTFs.R removes the TFs that their corresponding gene expression is 
 **scMTL\_pipeline\_part2.sm** contains the snakemake workflow for the part 2 of analysis.
 ## Part 3: model training
 In this last step of the workflow, we train our multi-task learning model on the feature and response matrices prepared from the previous parts. The results are stored in the path provided to the Rscript file: *run\_TGGLasso.R*. From the RData object saved by this script, one can load the data partitioned into training and test sets, via the partition variable (partitiona$test$x for feature and partitiona$test$y for response of the test partition). The coefficients of model can be accessed via TGL.model$B and TGL.model$intercept. For instance, in order to obtain the prediction on the training and test data, one can use the following command:
+```{r}
+pred.train <- cbind(1, x.train) %\*% rbind(TGL.model$intercept, TGL.model$B)
 
-pred.train <- cbind(1, x.train) %\*% rbind(TGL.model$intercept, TGL.model$B)</br>
-
-pred.test <- cbind(1, x.test) %\*% rbind(TGL.model$intercept, TGL.model$B)<br/>
-
+pred.test <- cbind(1, x.test) %\*% rbind(TGL.model$intercept, TGL.model$B)
+```
 **scMTL\_pipeline\_part3.sm** contains the snakemake workflow for the part 3 of analysis.
+
+# Case study
+To demonstrate a usage of Triangulate, we provided a snakemake file that given the processed and filtered feature and response matricies, it runs the tree-guided MTL model on the static features, for notImputed expression of the HLC/PHH cells.
