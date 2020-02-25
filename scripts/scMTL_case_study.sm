@@ -2,14 +2,17 @@ datasets= 'StemNet'
 imputation_status= 'notImputed'
 feature_type= 'static'
 model_type= 'TGGLasso'
+rule all:
+  input:
+    expand('scMTL_{dataset}_{impute}_{feat}_{model}.RData', dataset= datasets.split(' '), impute= imputation_status.split(' '), feat= feature_type.split(' '), model= model_type.split(' '))
 
 rule build_model:
   input:
-    'data/scMTL_{datasets}_{imputation_status}_{feature_type}_feature_doubleReduced.txt',
-    'data/scMTL_{datasets}_{imputation_status}_{feature_type}_response_doubleReduced.txt'
+    'data/scMTL_{datasets}_{imputation_status}_{feature_type}_feature_doubleReduced.csv',
+    'data/scMTL_{datasets}_{imputation_status}_{feature_type}_response_doubleReduced.csv'
   params:
     script='scripts/run_{model_type}.R'
   output:
     'scMTL_{datasets}_{imputation_status}_{feature_type}_{model_type}.RData'
   shell:
-    'time /TL/opt/bin/Rscript {params.script} {input[0]} {input[1]} {output[0]}'
+    'time Rscript {params.script} {input[0]} {input[1]} {output[0]}'
