@@ -11,15 +11,42 @@ We divided the procedure into three parts, which are implemented using the snake
 Throughout this workflow three wildcards are defined: *datasets*, *imputation\_status*, and *feature\_type*. The values that we used for *datasets* in our study are StemNet for the HLC/PHH cells and HSMM for the skeletal muscle myoblast cells.
 For the *imputation\_status* we used imputed and notImputed. And finally, for the *feature\_type* wildcard {static epigenetic dynamic} values were used.
 ## Part 1: data preparation
-This step invokes an R scripts in order to generate the desired response matrix of gene expression data. The file *run\_monocle\_tuorial\.R* takes three arguments, 1) path to the csv file containing TPM converted expression values, 2) path to the file where the output of _Monocle_ plots are created, 3) path to the RData object where the filtered expression data obtained from applying the filtering steps suggested by the Monocle's tutorial should be saved.
+This step invokes an R scripts in order to generate the desired response matrix of gene expression data. The file *run\_monocle\_tuorial\.R* takes three arguments:
+1) path to the csv file containing TPM converted expression values,
+2) path to the file where the output of _Monocle_ plots are created,
+3) path to the RData object where the filtered expression data obtained from applying the filtering steps suggested by the Monocle's tutorial should be saved.
+
+Note: In case the user wishes to use a different method for this step of filtering, they shall skip part 1 and start immediately with part 2 (see below), by providing the appropriate parameter.
 
 **scMTL\_pipeline\_part1.sm** in the scripts folder contains the snakemake workflow for the part 1 of analysis.
 ## Part 2: data filtering
-In this part, first the appropriate feature matrix is created using the wildcards {static epigenetic dynamic} indicating the type of regulatory feature required for the analysis. Afterwards, a series of filtering steps are applied on both feature and response matrices. 
-*removeRedundantGenes\_varianceBased.R* is invoked on the reduced gene expression data from the RData object obtained in part 1. Based on the 3rd quartile of variance computed for each gene overall its expression in single cells, a cutoff is used to discard the genes that exhibit low variance in their expression profile.
-*removeZeroExprTFs.R* removes the TFs that their corresponding gene expression is smaller than 1 for more than 90\% of cells.
+In this part, first the appropriate feature matrix is created using the wildcards {static epigenetic dynamic} indicating the type of regulatory feature required for the analysis. This is achieved through running the *prepare_features_hg38.R* script. It takes as argument:
+1) path to the input file containing the gene expression measurements in single cell (either RData from the monocle run or a matrix of genes (rows) and cells (columns)),
+2) parameter *monocle_param* that indicates whether the monocle object was created from **scMTL\_pipeline\_part1.sm**,
+3) path to the feature file,
+4) path to the response file,
+5) path to where the MST resulted from the monocle run should be saved.
 
-**scMTL\_pipeline\_part2.sm** in the scripts folder contains the snakemake workflow for the part 2 of analysis.
+If the user ran **scMTL\_pipeline\_part1.sm** in part 1, the *monocle_param* parameter should take the value of "TRUE", otherwise "FALSE". Consequently, the fifth argument related to the MST file will be empty when *monocle_param* was FALSE.
+Afterwards, a series of filtering steps are applied on both feature and response matrices.
+
+*removeRedundantGenes\_varianceBased.R* is invoked on the feature and response data obtained from the *prepare_features_hg38.R* script. Based on the 3rd quartile of variance computed for each gene across its expression in single cells, a cutoff is used to discard the genes that exhibit low variance in their expression profile. 
+
+The arguments to the script are as follows:
+1) path to the input file containing feature data,
+2) path to the input file containing response data,
+3) path to the output file where the filtered feature data should be stored,
+4) path to the output file where the filtered response data should be stored. In our snakemake pipeline the output files are tagged with "feature_reduced" or "response_reduced" in their file name for the feature and response data, respectively.
+
+Next, by running the *removeZeroExprTFs.R* script, we remove the TFs that their corresponding gene expression is smaller than 1 for more than 90\% of cells. This is done to avoid inclusion of TFs that their expression is too low across many cells, in the downstream analysis. This script takes as input the output files that were generated using the *removeRedundantGenes\_varianceBased.R* script and writes the further filtered data into the specified output files. In our snakemake pipeline these files are tagged with "feature_doubleReduced" and "response_doubleReduced" in their file name for the feature and response data, respectively.
+
+**scMTL\_pipeline\_part2.sm** in the **scripts** folder contains the snakemake workflow for the part 2 of analysis.
+
+Rule *prepare_ML_input* runs the *prepare_features_hg38.R* script.
+
+Rule *filter1* applies the filtering obtained by the *removeRedundantGenes\_varianceBased.R* script.
+
+Rule *filter2* executes the last filtering step yielded by *removeZeroExprTFs.R*.
 ## Part 3: model training
 In this last step of the workflow, we train our multi-task learning model on the feature and response matrices prepared from the previous parts. The results are stored in the path provided to the Rscript file: *run\_TGGLasso.R*. From the RData object saved by this script, one can load the data partitioned into training and test sets, via the partition variable (partition$test$x for feature and partition$test$y for response of the test partition). The coefficients of model can be accessed via TGL.model$B and TGL.model$intercept. For instance, in order to obtain the prediction on the training and test data, one can use the following command:
 ```{r}
