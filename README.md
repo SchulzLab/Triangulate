@@ -11,7 +11,7 @@ We divided the procedure into three parts, which are implemented using the snake
 Throughout this workflow three wildcards are defined: *datasets*, *imputation\_status*, and *feature\_type*. The values that we used for *datasets* in our study are StemNet for the HLC/PHH cells and HSMM for the skeletal muscle myoblast cells.
 For the *imputation\_status* we used imputed and notImputed. And finally, for the *feature\_type* wildcard {static epigenetic dynamic} values were used.
 ## Part 1: data preparation
-This step invokes an R scripts in order to generate the desired response matrix of gene expression data. The file *run\_monocle\_tuorial\.R* takes three arguments:
+This step invokes an R script in order to generate the desired response matrix of gene expression data. The file *run\_monocle\_tuorial\.R* takes three arguments:
 1) path to the csv file containing TPM converted expression values,
 2) path to the file where the output of _Monocle_ plots are created,
 3) path to the RData object where the filtered expression data obtained from applying the filtering steps suggested by the Monocle's tutorial should be saved.
@@ -27,7 +27,7 @@ In this part, first the appropriate feature matrix is created using the wildcard
 4) path to the response file,
 5) path to where the MST resulted from the monocle run should be saved.
 
-If the user ran **scMTL\_pipeline\_part1.sm** in part 1, the *monocle_param* parameter should take the value of "TRUE", otherwise "FALSE". Consequently, the fifth argument related to the MST file will be empty when *monocle_param* was FALSE.
+If the user ran **scMTL\_pipeline\_part1.sm** in part 1, the *monocle_param* parameter should take the value of "TRUE", otherwise "FALSE". Consequently, the fifth argument related to the MST file will be empty when *monocle_param* is FALSE.
 Afterwards, a series of filtering steps are applied on both feature and response matrices.
 
 *removeRedundantGenes\_varianceBased.R* is invoked on the feature and response data obtained from the *prepare_features_hg38.R* script. Based on the 3rd quartile of variance computed for each gene across its expression in single cells, a cutoff is used to discard the genes that exhibit low variance in their expression profile. 
@@ -48,14 +48,14 @@ Rule *filter1* applies the filtering obtained by the *removeRedundantGenes\_vari
 
 Rule *filter2* executes the last filtering step yielded by *removeZeroExprTFs.R*.
 ## Part 3: model training
-In this last step of the workflow, we train our statistical learning model (single-task or multi-task indicated by the *model\_type* wiledcard) on the feature and response matrices prepared from the previous parts.
+In this last step of the workflow, we train our statistical learning model (single-task or multi-task indicated by the *model\_type* wildcard) on the feature and response matrices prepared from the previous parts.
 
 For the multi-task model, the results are stored in the path provided to the Rscript file: *run\_TGGLasso.R*. This script requires two arguments:
 1) path to the input feature file, which is obtained from part 2 of the snakemake pipeline,
 2) path to the input response file, which is obtained from part 2 of the snakemake pipeline,
 3) path to the output file, which is an RData object containing a list holding the partitioned data, and another list holding the model itself.
 
-IN other words, from the RData object saved by this script, one can load the data partitioned into training and test sets, via the partition variable (partition$test$x for feature and partition$test$y for response of the test partition).
+In other words, from the RData object saved by this script, one can load the data partitioned into training and test sets, via the partition variable (partition$test$x for feature and partition$test$y for response of the test partition).
 
 The coefficients of the multi-task model can be accessed via TGL.model$B and TGL.model$intercept. For instance, in order to obtain the prediction on the training data, one can use the following command:
 ```{r}
