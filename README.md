@@ -48,14 +48,27 @@ Rule *filter1* applies the filtering obtained by the *removeRedundantGenes\_vari
 
 Rule *filter2* executes the last filtering step yielded by *removeZeroExprTFs.R*.
 ## Part 3: model training
-In this last step of the workflow, we train our multi-task learning model on the feature and response matrices prepared from the previous parts. The results are stored in the path provided to the Rscript file: *run\_TGGLasso.R*. From the RData object saved by this script, one can load the data partitioned into training and test sets, via the partition variable (partition$test$x for feature and partition$test$y for response of the test partition). The coefficients of model can be accessed via TGL.model$B and TGL.model$intercept. For instance, in order to obtain the prediction on the training and test data, one can use the following command:
+In this last step of the workflow, we train our statistical learning model (single-task or multi-task indicated by the *model\_type* wiledcard) on the feature and response matrices prepared from the previous parts.
+
+For the multi-task model, the results are stored in the path provided to the Rscript file: *run\_TGGLasso.R*. This script requires two arguments:
+1) path to the input feature file, which is obtained from part 2 of the snakemake pipeline,
+2) path to the input response file, which is obtained from part 2 of the snakemake pipeline,
+3) path to the output file, which is an RData object containing a list holding the partitioned data, and another list holding the model itself.
+
+IN other words, from the RData object saved by this script, one can load the data partitioned into training and test sets, via the partition variable (partition$test$x for feature and partition$test$y for response of the test partition).
+
+The coefficients of the multi-task model can be accessed via TGL.model$B and TGL.model$intercept. For instance, in order to obtain the prediction on the training data, one can use the following command:
 ```{r}
 pred.train <- cbind(1, x.train) %*% rbind(TGL.model$intercept, TGL.model$B)
+The cbind(1, .) is required to account for the intercept values held in TGL.model$intercept. The data matrix x.train, holds the scaled feature values for the training data (partition$train$x). The result of this inner product is the predictions of the gene expression on the training set.
+
+Similarly on the test data, we execute the following command:
 
 pred.test <- cbind(1, x.test) %*% rbind(TGL.model$intercept, TGL.model$B)
 ```
+Here, x.test holds the scaled feature values of the test partition (partition$test$x) and pred.test, which is the inner product of features onto the model coefficits gives the predicted single cell gene expression values on the test data.
 **scMTL\_pipeline\_part3.sm** in the scripts folder contains the snakemake workflow for the part 3 of analysis.
-
+This file has only one rule, named *build\_model*, which is used to invoke the script meant for training the statistical model.
 # Case study <a name="case-study"></a>
 To demonstrate a usage of Triangulate, we provided a snakemake file that given the processed and filtered feature and response matrices, it runs the tree-guided MTL model on the static features, for notImputed expression of the HLC/PHH cells (StemNet).
 As the first step, the user needs to clone the git repository onto their desired repository:
