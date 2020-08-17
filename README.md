@@ -57,16 +57,18 @@ For the multi-task model, the results are stored in the path provided to the Rsc
 
 In other words, from the RData object saved by this script, one can load the data partitioned into training and test sets, via the partition variable (partition$test$x for feature and partition$test$y for response of the test partition).
 
-The coefficients of the multi-task model can be accessed via TGL.model$B and TGL.model$intercept. For instance, in order to obtain the prediction on the training data, one can use the following command:
+The coefficients of the multi-task model can be accessed via *TGL.model$B* and *TGL.model$intercept*. For instance, in order to obtain the prediction on the training data, one can use the following command:
 ```{r}
 pred.train <- cbind(1, x.train) %*% rbind(TGL.model$intercept, TGL.model$B)
-The cbind(1, .) is required to account for the intercept values held in TGL.model$intercept. The data matrix x.train, holds the scaled feature values for the training data (partition$train$x). The result of this inner product is the predictions of the gene expression on the training set.
+```
+The *cbind(1, .)* operation is required to account for the intercept values held in *TGL.model$intercept*. The data matrix *x.train*, holds the scaled feature values for the training data (*partition$train$x*). The result of this inner product is the predictions of the gene expression on the training set.
 
 Similarly on the test data, we execute the following command:
 
+```
 pred.test <- cbind(1, x.test) %*% rbind(TGL.model$intercept, TGL.model$B)
 ```
-Here, x.test holds the scaled feature values of the test partition (partition$test$x) and pred.test, which is the inner product of features onto the model coefficients gives the predicted single cell gene expression values on the test data.
+Here, *x.test* holds the scaled feature values of the test partition (*partition$test$x*) and *pred.test*, which is the inner product of features onto the model coefficients gives the predicted single cell gene expression values on the test data.
 **scMTL\_pipeline\_part3.sm** in the scripts folder contains the snakemake workflow for the part 3 of analysis.
 This file has only one rule, named *build\_model*, which is used to invoke the script meant for training the statistical model.
 # Case study <a name="case-study"></a>
