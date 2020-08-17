@@ -1,6 +1,7 @@
 datasets= 'StemNet HSMM'
 imputation_status= 'imputed notImputed'
 feature_type= 'static epigenetic dynamic'
+monocle_stat= 'TRUE'
 
 rule all:
   input:
@@ -16,12 +17,14 @@ rule all:
 rule prepare_ML_input:
   input:
     'monocle_{datasets}_{imputation_status}_TPM_converted.RData'
+  params:
+    monocle_param={monocle_stat}
   output:
     'scMTL_{datasets}_{imputation_status}_{feature_type}_feature.txt',
     'scMTL_{datasets}_{imputation_status}_{feature_type}_response.txt',
     'scMTL_{datasets}_{imputation_status}_{feature_type}_MST_adj.txt'
   shell:
-    'time R3script prepare_features_hg38.R {input[0]} {output[0]} {output[1]} {output[2]}'
+    'time R3script prepare_features_hg38.R {input[0]} {params.monocle_param} {output[0]} {output[1]} {output[2]}'
 
 rule filter1:
   input:
