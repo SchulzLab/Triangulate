@@ -66,7 +66,7 @@ Similarly on the test data, we execute the following command:
 
 pred.test <- cbind(1, x.test) %*% rbind(TGL.model$intercept, TGL.model$B)
 ```
-Here, x.test holds the scaled feature values of the test partition (partition$test$x) and pred.test, which is the inner product of features onto the model coefficits gives the predicted single cell gene expression values on the test data.
+Here, x.test holds the scaled feature values of the test partition (partition$test$x) and pred.test, which is the inner product of features onto the model coefficients gives the predicted single cell gene expression values on the test data.
 **scMTL\_pipeline\_part3.sm** in the scripts folder contains the snakemake workflow for the part 3 of analysis.
 This file has only one rule, named *build\_model*, which is used to invoke the script meant for training the statistical model.
 # Case study <a name="case-study"></a>
