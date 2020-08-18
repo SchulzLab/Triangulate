@@ -73,7 +73,7 @@ Here, *x.test* holds the scaled feature values of the test partition (*partition
 **scMTL\_pipeline\_part3.sm** in the scripts folder contains the snakemake workflow for the part 3 of analysis.
 This file has only one rule, named *build\_model*, which is used to invoke the script meant for training the statistical model.
 
-# Requirements <a name="req"></a>
+# Requirements <a name="reqs"></a>
 As the first step, the user needs to clone the git repository onto their desired repository:
 ```console
 git clone https://github.com/SchulzLab/Triangulate.git
