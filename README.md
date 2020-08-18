@@ -83,6 +83,7 @@ It is required to have the following R packages installed for the compilation of
 * parallel
 * doParallel
 * monocle
+
 The case study below will demonstrate how the Triangulate model should be built and interpreted.
 
 # Case study <a name="case-study"></a>
