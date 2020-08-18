@@ -1,6 +1,7 @@
 # Table of contents
 1. [Triangulate](#Triangulate)
-2. [Case study](#case-study)
+2. [Requirements](#reqs)
+3. [Case study](#case-study)
 # Triangulate
 TRee guIded estimAtioN of siNgle cell reGULATion
 
@@ -71,8 +72,8 @@ pred.test <- cbind(1, x.test) %*% rbind(TGL.model$intercept, TGL.model$B)
 Here, *x.test* holds the scaled feature values of the test partition (*partition$test$x*) and *pred.test*, which is the inner product of features onto the model coefficients gives the predicted single cell gene expression values on the test data.
 **scMTL\_pipeline\_part3.sm** in the scripts folder contains the snakemake workflow for the part 3 of analysis.
 This file has only one rule, named *build\_model*, which is used to invoke the script meant for training the statistical model.
-# Case study <a name="case-study"></a>
-To demonstrate a usage of Triangulate, we provided a snakemake file that given the processed and filtered feature and response matrices, it runs the tree-guided MTL model on the static features, for notImputed expression of the HLC/PHH cells (StemNet).
+
+# Requirements <a name="req"></a>
 As the first step, the user needs to clone the git repository onto their desired repository:
 ```console
 git clone https://github.com/SchulzLab/Triangulate.git
@@ -82,6 +83,10 @@ It is required to have the following R packages installed for the compilation of
 * parallel
 * doParallel
 * monocle
+The case study below will demonstrate how the Triangulate model should be built and interpreted.
+
+# Case study <a name="case-study"></a>
+To demonstrate a usage of Triangulate, we provided a snakemake file that given the processed and filtered feature and response matrices, it runs the tree-guided MTL model on the static features, for notImputed expression of the HLC/PHH cells (StemNet).
 
 To build the Triangulate model for this case study, the following command should be used in bash. But before that make sure to decompress the scMTL\_StemNet\_notImputed\_static\_feature\_doubleReduced.zip file in the data directory.
 ```console
