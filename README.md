@@ -2,7 +2,7 @@
 1. [Triangulate](#Triangulate)
 2. [Case study](#case-study)
 # Triangulate
-TRee guIded estimAtioN of siNgle cell reGULATion
+![TRee guIded estimAtioN of siNgle cell reGULATion](https://academic.oup.com/gigascience/article/9/11/giaa113/5943496)
 
 Triangulate provides a platform for linking regulatory elements to gene expression in single cells. Given a feature matrix consisting of estimated TF activities for each gene, and a response matrix consisting of gene expression measurements at single cell level, Triangulate is able to infer the TF-to-cell activities through building a multi-task learning model. The figure below illustrates the input matrices for the multi-task learning framework. The estimated coefficients obtained from training the model on the TF data can be used to interpret the activity of each TF in individual cells.
 ![Triangulate](https://github.com/SchulzLab/Triangulate/blob/master/images/triangulate.001.png)
